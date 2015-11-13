@@ -1,0 +1,9 @@
+[general]
+name=syslogd
+version=1.0.0
+qgisMinimumVersion=2.8
+description=log qgis server requests to syslog
+author=David Marteau
+email=dmarteau@3liz.com
+server=True
+tags=server, syslog
