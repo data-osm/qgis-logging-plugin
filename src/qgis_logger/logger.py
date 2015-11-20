@@ -25,9 +25,14 @@ class SyslogFilter(QgsServerFilter):
         params = req.parameterMap()
         # Send all params throught syslog
         ms = int((time() - self.t_start) * 1000.0)
-        params.update(RESPONSE_TIME=ms)
+        if req.exceptionRaised():
+            pri = syslog.LOG_ERR
+            status = "error"
+        else:
+            pri = syslog.LOG_NOTICE
+            status = "ok"
+        params.update(RESPONSE_TIME=ms, RESPONSE_STATUS=status)
         log_msg = json.dumps(params)
-        pri = syslog.LOG_ERR if req.exceptionRaised() else syslog.LOG_NOTICE
         syslog.syslog(pri, log_msg)
 
 
@@ -40,5 +45,5 @@ class SyslogClient:
         """
         # save reference to the QGIS interface
         self.iface = iface
-        QgsMessageLog.logMessage("Initializing Syslog plugin", 'plugin', QgsMessageLog.INFO)
+        QgsMessageLog.logMessage("Initializing Syslog plugin", 'plugin', QgsMessageLog.WARNING)
         self.iface.registerFilter( SyslogFilter(iface), 1000 ) 
