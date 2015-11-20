@@ -1,5 +1,5 @@
 [general]
-name=syslogd
+name=qgis_logger
 version=1.0.0
 qgisMinimumVersion=2.8
 description=log qgis server requests to syslog

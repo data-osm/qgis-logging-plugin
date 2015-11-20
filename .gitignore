@@ -1,4 +1,7 @@
 
+# local .fabricrc
+.fabricrc
+
 # python compiled 
 *.pyc
 
@@ -9,4 +12,6 @@
 .project
 .pydevproject
 .settings
+
+MANIFEST
 
