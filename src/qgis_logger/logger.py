@@ -23,6 +23,10 @@ class SyslogFilter(QgsServerFilter):
         """
         req = self.serverInterface().requestHandler()
         params = req.parameterMap()
+        # If we are called with no params
+        # There is nothing to log so just return
+        if not params:
+            return
         # Send all params throught syslog
         ms = int((time() - self.t_start) * 1000.0)
         if req.exceptionRaised():
