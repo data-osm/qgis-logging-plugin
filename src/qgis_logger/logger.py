@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-# 
+#
+from __future__ import print_function
 from qgis.core import QgsMessageLog
 from qgis.server import QgsServerFilter
 from time import time 
 import json
 import syslog
+
+from flushfilter import FlushFilter
+
 
 class SyslogFilter(QgsServerFilter):
     """ Qgis syslog filter implementation
@@ -12,7 +16,7 @@ class SyslogFilter(QgsServerFilter):
     def __init__(self, iface):
         syslog.openlog(logoption=syslog.LOG_PID, facility=syslog.LOG_LOCAL7)
         super(SyslogFilter, self).__init__(iface)
-    
+
     def requestReady(self):
         """ Called when request is ready 
         """
@@ -38,6 +42,7 @@ class SyslogFilter(QgsServerFilter):
         params.update(RESPONSE_TIME=ms, RESPONSE_STATUS=status)
         log_msg = json.dumps(params)
         syslog.syslog(pri, log_msg)
+        
 
 
 class SyslogClient:
@@ -51,3 +56,5 @@ class SyslogClient:
         self.iface = iface
         QgsMessageLog.logMessage("Initializing Syslog plugin", 'plugin', QgsMessageLog.WARNING)
         self.iface.registerFilter( SyslogFilter(iface), 1000 ) 
+        self.iface.registerFilter( FlushFilter(iface),  10 )
+
