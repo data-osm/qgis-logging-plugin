@@ -3,12 +3,25 @@
 from qgis.core import QgsMessageLog
 from qgis.server import QgsServerFilter
 import json
+import os
+import hashlib
+
+from time import time
 
 
-def dprint( *args ):
-   import sys
-   sys.stderr.write( ' '.join(str(a) for a in args)+'\n')
-   sys.stderr.flush() 
+def md5( path ):
+  try:
+    content = open(path).read()
+    if isinstance(content, unicode):
+        content = content.encode('utf-8')
+    return hashlib.md5(content).hexdigest() 
+  except Exception as e:
+    QgsMessageLog.logMessage('ERROR: '+str(e), 'plugin', QgsMessageLog.ERROR)
+    raise 
+      
+
+def dlog( message ):
+    QgsMessageLog.logMessage(message, 'plugin', QgsMessageLog.WARNING)
 
 
 class FlushFilter(QgsServerFilter):
@@ -16,31 +29,30 @@ class FlushFilter(QgsServerFilter):
     """
     def __init__(self, iface):
         super(FlushFilter, self).__init__(iface)
+        self._cached = {}
     
     def requestReady(self):
         """ Called when request is ready 
         """
-        pass
+        req = self.serverInterface().requestHandler()
+        params = req.parameterMap()
+        if params:
+            now  = time()
+            path = params.get('MAP')
+            if path and path in self._cached:
+                tm, digest = self._cached[path] 
+                if now-tm > 15.0:
+                    new_digest = md5(path)
+                    if new_digest != digest:
+                        QgsMessageLog.logMessage('Flushing cache entry: {}'.format(path), 'plugin', QgsMessageLog.WARNING)
+                        self.serverInterface().removeConfigCacheEntry(path)
+                    self._cached[path] = (now, new_digest)
+            elif os.path.exists(path):
+                self._cached[path] = (now, md5(path))
+
 
     def responseComplete(self):
         """ Called when response is ready
         """
-        req = self.serverInterface().requestHandler()
-        params = req.parameterMap()
-        # If we are called with no params
-        # There is nothing to log so just return
-        if not params:
-            return
-
-        if params.get('SERVICE', '').upper() == 'FLUSH':
-            path = params.get('PATH')
-            req.clearHeaders()
-            req.clearBody()
-            req.setHeader('Content-type', 'application/json')
-            if path is not None:
-                self.serverInterface().removeConfigCacheEntry(path)
-                req.appendBody('{ "command":"FLUSH", "path":"%s" }' % path)
-            else:
-                req.appendBody('{ "command":"FLUSH", "error": "path_missing" }')
-
+        pass
 
