@@ -9,6 +9,9 @@ import hashlib
 from time import time
 
 
+FLUSH_INTERVAL = 3600 * 24
+
+
 def md5( path ):
   try:
     content = open(path).read()
@@ -30,7 +33,18 @@ class FlushFilter(QgsServerFilter):
     def __init__(self, iface):
         super(FlushFilter, self).__init__(iface)
         self._cached = {}
-    
+        self._flush = time()
+
+    def clean_up(self, now):
+        """
+        """
+        if now - self._flush > FLUSH_INTERVAL/2:
+            for path in self._cached:
+                tm, _ = self._cached[path]
+                if now - tm > FLUSH_INTERVAL:
+                    del self._cached[path]
+        self._flush = now
+
     def requestReady(self):
         """ Called when request is ready 
         """
@@ -45,8 +59,9 @@ class FlushFilter(QgsServerFilter):
                     new_digest = md5(path)
                     if new_digest != digest:
                         QgsMessageLog.logMessage('Flushing cache entry: {}'.format(path), 'plugin', QgsMessageLog.WARNING)
-                        self.serverInterface().removeConfigCacheEntry(path)
+                        self.serverInterface().removeProjectCacheEntry(path)
                     self._cached[path] = (now, new_digest)
+                    self.clean_up(now)
             elif os.path.exists(path):
                 self._cached[path] = (now, md5(path))
 
@@ -54,5 +69,4 @@ class FlushFilter(QgsServerFilter):
     def responseComplete(self):
         """ Called when response is ready
         """
-        pass
 
