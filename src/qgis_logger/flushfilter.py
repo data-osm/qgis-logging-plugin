@@ -59,6 +59,7 @@ class FlushFilter(QgsServerFilter):
                     new_digest = md5(path)
                     if new_digest != digest:
                         QgsMessageLog.logMessage('Flushing cache entry: {}'.format(path), 'plugin', QgsMessageLog.WARNING)
+                        self.serverInterface().removeConfigCacheEntry(path)
                         self.serverInterface().removeProjectCacheEntry(path)
                     self._cached[path] = (now, new_digest)
                     self.clean_up(now)
