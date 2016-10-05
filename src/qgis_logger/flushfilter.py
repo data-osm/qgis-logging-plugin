@@ -39,10 +39,10 @@ class FlushFilter(QgsServerFilter):
         """
         """
         if now - self._flush > FLUSH_INTERVAL/2:
-            for path in self._cached:
-                tm, _ = self._cached[path]
-                if now - tm > FLUSH_INTERVAL:
-                    del self._cached[path]
+            # List candidates to deletion before deleting them
+            paths = [p for p,(tm,_) in self._cached.iteritems() if now - tm > FLUSH_INTERVAL]
+            for p in paths:
+                del self._cached[p]
         self._flush = now
 
     def requestReady(self):
