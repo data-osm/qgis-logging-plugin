@@ -11,9 +11,8 @@ VERSION=$(shell python metadata.py src/qgis_logger/metadata.txt version)
 main:
 	echo "Makefile for packaging infra components: select a task"
 
-FILES=qgis_logger \ 
-	wfsOutputExtension
+FILES=qgis_logger wfsOutputExtension
 
 package:
-	$(FABRIC) package:qgis_logger,versiontag=$(VERSION),files=$(FILES),directory=./src 
+	$(FABRIC) package:qgis_logger,versiontag=$(VERSION),files="$(FILES)",directory=./src 
 
