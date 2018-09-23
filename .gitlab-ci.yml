@@ -1,0 +1,28 @@
+stages:
+- build
+- deploy
+- release
+
+build:
+  stage: build
+  script:
+    - make package
+  environment:
+    name: snap
+
+deploy_snap:
+  stage: deploy
+  script:
+    - sudo -u fabric fab snap deploy:qgis_logger,force=true
+  environment:
+    name: snap
+
+release_prod:
+  stage: release
+  script:
+    - sudo -u fabric fab prod release:qgis_logger
+  environment:
+    name: production
+  when: manual
+  only:
+    - tags
