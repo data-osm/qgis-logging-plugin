@@ -9,7 +9,7 @@ build:
     - make package
   environment:
     name: snap
-  tag:
+  tags:
     - fabric
 
 deploy_snap:
@@ -18,7 +18,7 @@ deploy_snap:
     - sudo -u fabric fab snap deploy:qgis_logger,force=true
   environment:
     name: snap
-  tag:
+  tags:
     - fabric
 
 release_prod:
@@ -30,5 +30,5 @@ release_prod:
   when: manual
   only:
     - tags
-  tag:
+  tags:
     - fabric
