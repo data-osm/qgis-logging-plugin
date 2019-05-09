@@ -1,13 +1,22 @@
-# -*- coding: utf-8 -*-
+############################################################################
+#    QGIS Server Plugin Filters: Add Output Formats to GetFeature request
 #
-from __future__ import print_function
-from qgis.core import QgsMessageLog
+#    Copyright            : (C) 2016-2019 by 3Liz
+#    Email                : info at 3liz dot com
+#                                                                         
+#   This program is free software; you can redistribute it and/or modify  
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+############################################################################
+
+from qgis.core import Qgis, QgsMessageLog
 from qgis.server import QgsServerFilter
 from time import time 
 import json
 import syslog
 
-from flushfilter import FlushFilter
+from .flushfilter import FlushFilter
 
 
 class SyslogFilter(QgsServerFilter):
@@ -54,7 +63,7 @@ class SyslogClient:
         """
         # save reference to the QGIS interface
         self.iface = iface
-        QgsMessageLog.logMessage("Initializing Syslog plugin", 'plugin', QgsMessageLog.WARNING)
+        QgsMessageLog.logMessage("Initializing Syslog/Flush plugin", 'plugin', Qgis.Info)
         self.iface.registerFilter( SyslogFilter(iface), 1000 ) 
         self.iface.registerFilter( FlushFilter(iface),  10 )
 
