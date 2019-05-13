@@ -53,7 +53,9 @@ class FlushFilter(QgsServerFilter):
         if params:
             now  = time()
             path = params.get('MAP')
-            if path and path in self._cached:
+            if path is None:
+                return
+            elif path in self._cached:
                 tm, digest = self._cached[path] 
                 if now-tm > 15.0:
                     new_digest = md5(path)
