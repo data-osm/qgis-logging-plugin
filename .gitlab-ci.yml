@@ -45,7 +45,7 @@ release_prod:
 build_legacy:
   stage: build
   script:
-    - make -C .lizcloud -f factory-infrav2.mk package
+    - make -C .lizcloud -f fabric.mk package
   environment:
     name: snap
   tags:
