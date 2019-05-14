@@ -21,7 +21,7 @@ buildv2/$(PACKAGEDIR):
 
 
 .PHONY: package
-package: build/$(PACKAGEDIR)
+package: buildv2/$(PACKAGEDIR)
 	@echo "Building package $(PACKAGE)"
 	@cp -rLp $(FILES) buildv2/$(PACKAGEDIR)/
 	$(FABRIC) package:qgis3_logger,versiontag=$(VERSION),files="qgis_logger",directory=./buildv2
