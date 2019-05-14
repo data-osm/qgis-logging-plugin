@@ -6,7 +6,7 @@ ifndef FABRIC
 FABRIC:=$(shell [ -e .fabricrc ] && echo "fab -c .fabricrc" || echo "fab") 
 endif
 
-VERSION=$(shell python metadata.py src/qgis_logger/metadata.txt version)
+VERSION=$(shell ./metadata_key ../src/qgis_logger/metadata.txt version)
 
 main:
 	echo "Makefile for packaging infra components: select a task"
@@ -14,5 +14,5 @@ main:
 FILES=qgis_logger
 
 package:
-	$(FABRIC) package:qgis_logger,versiontag=$(VERSION),files="$(FILES)",directory=./src 
+	$(FABRIC) package:qgis_logger,versiontag=$(VERSION),files="$(FILES)",directory=../src
 
