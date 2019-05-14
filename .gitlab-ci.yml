@@ -4,8 +4,8 @@ stages:
 - release
 
 variables:
-    FACTORY_PRODUCT_NAME: wfsOutputExtension
-    FACTORY_PACKAGE_NAME: qgis_wfsoutput
+    FACTORY_PRODUCT_NAME: qgis_logger
+    FACTORY_PACKAGE_NAME: qgis_logger
     FACTORY_PACKAGE_TYPE: plugin
     FACTORY_MANIFEST: ".lizcloud/factory.manifest"
 
@@ -41,4 +41,37 @@ release_prod:
     - tags
   tags:
     - infrav3
+
+build_legacy:
+  stage: build
+  script:
+    - make -C .lizcloud -f factory-infrav2.mk package
+  environment:
+    name: snap
+  tags:
+    - fabric
+    - infrav2
+
+deploy_snap_legacy:
+  stage: deploy
+  script:
+    - sudo -u fabric fab snap deploy:qgis3_logger,force=true
+  environment:
+    name: snap
+  tags:
+    - fabric
+    - infrav2
+
+release_prod_legacy:
+  stage: release
+  script:
+    - sudo -u fabric fab prod release:qgis3_logger
+  environment:
+    name: production
+  when: manual
+  only:
+    - tags
+  tags:
+    - fabric
+    - infrav2
 
