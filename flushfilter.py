@@ -36,6 +36,9 @@ class FlushFilter(QgsServerFilter):
         self._cached = {}
         self._flush = time()
 
+    def get_cached_entry(self, projectpath):
+        return self._cached.get(projectpath)
+
     def clean_up(self, now):
         """
         """
