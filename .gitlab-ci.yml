@@ -12,7 +12,7 @@ variables:
 build:
   stage: build
   script:
-    - make -C tests
+    - make -C tests LOCAL_HOME=$RUNNER_HOME
     - make -C .lizcloud -f factory.mk package
   environment:
     name: snap
@@ -28,6 +28,8 @@ deploy_snap:
     - $FACTORY_SCRIPTS/deploy-package $FACTORY_PACKAGE_NAME
   environment:
     name: snap
+  dependencies:
+    - build
   tags:
     - infrav3
 
@@ -37,6 +39,8 @@ release_prod:
     - $FACTORY_SCRIPTS/release_package $FACTORY_PACKAGE_NAME
   environment:
     name: production
+  dependencies:
+    - build
   when: manual
   only:
     - tags
@@ -59,6 +63,8 @@ deploy_snap_legacy:
     - sudo -u fabric fab snap deploy:qgis3_logger,force=true
   environment:
     name: snap
+  dependencies:
+    - build_legacy
   tags:
     - fabric
     - infrav2
@@ -69,6 +75,8 @@ release_prod_legacy:
     - sudo -u fabric fab prod release:qgis3_logger
   environment:
     name: production
+  dependencies:
+    - build_legacy
   when: manual
   only:
     - tags
