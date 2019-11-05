@@ -14,7 +14,7 @@ class SyslogFilter(QgsServerFilter):
     """ Qgis syslog filter implementation
     """
     def __init__(self, iface):
-        syslog.openlog(logoption=syslog.LOG_PID, facility=syslog.LOG_LOCAL7)
+        syslog.openlog("qgis_mapserver",logoption=syslog.LOG_PID, facility=syslog.LOG_LOCAL7)
         super(SyslogFilter, self).__init__(iface)
 
     def requestReady(self):
