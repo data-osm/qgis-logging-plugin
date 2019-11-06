@@ -1,6 +1,6 @@
 [general]
 name=qgis_logger
-version=1.2.1
+version=1.2.2
 qgisMinimumVersion=3.4
 description=log qgis server requests to syslog
 author=David Marteau
