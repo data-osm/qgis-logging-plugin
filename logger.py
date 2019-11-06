@@ -13,6 +13,7 @@
 from qgis.core import Qgis, QgsMessageLog
 from qgis.server import QgsServerFilter
 from time import time 
+from urllib.parse import unquote
 import os
 import json
 import syslog
@@ -46,6 +47,8 @@ class SyslogFilter(QgsServerFilter):
         # There is nothing to log so just return
         if not params:
             return
+        # Params are URL encoded 
+        params = { k:unquote(v) for (k,v) in params.items() }
         # Send all params throught syslog
         ms = int((time() - self.t_start) * 1000.0)
         if req.exceptionRaised():
