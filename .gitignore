@@ -20,3 +20,6 @@ MANIFEST
 __pycache__
 __output__
 
+.cache
+.local
+.pytest_cache
