@@ -1,13 +1,6 @@
 import logging
-import os
-import sys
-
-from pathlib import Path
 
 import lxml.etree
-
-from qgis.core import Qgis, QgsProject
-from qgis.server import QgsBufferServerRequest, QgsBufferServerResponse
 
 
 def test_load_plugins(client):
@@ -28,7 +21,7 @@ def test_cache_filter(client):
 
     # Issue a request
     qs = "?MAP=france_parts.qgs&SERVICE=WMS&REQUEST=GetCapabilities"
-    rv = client.get(qs,'france_parts.qgs')
+    rv = client.get(qs, 'france_parts.qgs')
 
     if rv.status_code != 200:
         logging.error(lxml.etree.tostring(rv.xml, pretty_print=True))
@@ -39,5 +32,3 @@ def test_cache_filter(client):
     projectpath = client.getprojectpath('france_parts.qgs')
     entry = _filter.get_cached_entry(projectpath)
     assert entry is not None
-
-

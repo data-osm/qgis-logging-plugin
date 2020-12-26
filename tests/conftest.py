@@ -1,13 +1,23 @@
 import configparser
 import glob
-import json
 import logging
 import os
 import sys
 import traceback
 
+from typing import Any, Dict, Generator
+
 import lxml.etree
 import pytest
+
+from qgis.core import Qgis, QgsApplication, QgsProject
+from qgis.server import (
+    QgsBufferServerRequest,
+    QgsBufferServerResponse,
+    QgsServer,
+    QgsServerInterface,
+    QgsServerRequest,
+)
 
 logging.basicConfig( stream=sys.stderr )
 logging.disable(logging.NOTSET)
@@ -15,18 +25,8 @@ logging.disable(logging.NOTSET)
 LOGGER = logging.getLogger('qgislogger')
 LOGGER.setLevel(logging.DEBUG)
 
-from typing import Any, Dict, Generator, List, Mapping, Union
-
-#
-from qgis.core import Qgis, QgsApplication, QgsProject
-from qgis.server import (
-    QgsBufferServerRequest,
-    QgsBufferServerResponse,
-    QgsServer,
-    QgsServerRequest,
-)
-
 plugin_path = None
+
 
 def pytest_addoption(parser) -> None:
     parser.addoption("--qgis-plugins", metavar="PATH", help="Plugin path", default=None)
@@ -47,10 +47,10 @@ def pytest_sessionstart(session) -> None:
     os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
     # Define this in global environment
-    #os.environ['QGIS_DISABLE_MESSAGE_HOOKS'] = '1'
-    #os.environ['QGIS_NO_OVERRIDE_IMPORT'] = '1'
+    # os.environ['QGIS_DISABLE_MESSAGE_HOOKS'] = '1'
+    # os.environ['QGIS_NO_OVERRIDE_IMPORT'] = '1'
 
-    qgis_pluginpath = os.environ.get('QGIS_PLUGINPATH','/usr/share/qgis/python/plugins/')
+    qgis_pluginpath = os.environ.get('QGIS_PLUGINPATH', '/usr/share/qgis/python/plugins/')
     sys.path.append(qgis_pluginpath)
 
     qgis_application = QgsApplication([], False)
@@ -90,7 +90,7 @@ class _Response:
 
     @property
     def xml(self) -> 'xml':
-        if self._xml is None and self._resp.headers().get('Content-Type','').find('text/xml')==0:
+        if self._xml is None and self._resp.headers().get('Content-Type', '').find('text/xml') == 0:
             self._xml = lxml.etree.fromstring(self.content.decode('utf-8'))
         return self._xml
 
@@ -103,8 +103,9 @@ class _Response:
         return self._resp.statusCode()
 
     @property
-    def headers(self) -> Dict[str,str]:
+    def headers(self) -> Dict[str, str]:
         return self._resp.headers()
+
 
 @pytest.fixture
 def client(request):
@@ -124,7 +125,7 @@ def client(request):
 
         @property
         def server_interface(self):
-            return  self.server.serverInterface()
+            return self.server.serverInterface()
 
         def getplugin(self, name) -> Any:
             """ retourne l'instance du plugin
@@ -134,7 +135,7 @@ def client(request):
         def getprojectpath(self, name: str) -> str:
             return self.datapath.join(name).strpath
 
-        def get(self, query: str, project: str=None) -> _Response:
+        def get(self, query: str, project: str = None) -> _Response:
             """ Return server response from query
             """
             request  = QgsBufferServerRequest(query, QgsServerRequest.GetMethod, {}, None)
@@ -149,14 +150,14 @@ def client(request):
             # See https://github.com/qgis/QGIS/pull/9773
             self.server.serverInterface().setConfigFilePath(qgsproject.fileName())
             self.server.handleRequest(request, response, project=qgsproject)
-            return _Response(response,request)
+            return _Response(response, request)
 
     return _Client()
 
 
-## 
-## Plugins
-##
+#
+# Plugins
+#
 
 def checkQgisVersion(minver: str, maxver: str) -> bool:
 
@@ -170,15 +171,15 @@ def checkQgisVersion(minver: str, maxver: str) -> bool:
             major += 1
         if rev > 99:
             rev = 99
-        return int("{:d}{:02d}{:02d}".format(major,minor,rev))
-
+        return int("{:d}{:02d}{:02d}".format(major, minor, rev))
 
     version = to_int(Qgis.QGIS_VERSION.split('-')[0])
     minver  = to_int(minver) if minver else version
     maxver  = to_int(maxver) if maxver else version
     return minver <= version <= maxver
 
-def find_plugins(pluginpath: str) -> Generator[str,None,None]:
+
+def find_plugins(pluginpath: str) -> Generator[str, None, None]:
     """ Load plugins
     """
     for plugin in glob.glob(os.path.join(plugin_path + "/*")):
@@ -202,16 +203,17 @@ def find_plugins(pluginpath: str) -> Generator[str,None,None]:
             minver = cp['general'].get('qgisMinimumVersion')
             maxver = cp['general'].get('qgisMaximumVersion')
         except Exception as exc:
-            LOGGER.critical("Error reading plugin metadata '%s': %s",metadatafile,exc)
+            LOGGER.critical("Error reading plugin metadata '%s': %s", metadatafile, exc)
             continue
 
-        if not checkQgisVersion(minver,maxver):
-            LOGGER.critical(("Unsupported version for %s:"
+        if not checkQgisVersion(minver, maxver):
+            LOGGER.critical((
+                "Unsupported version for %s:"
                 "\n MinimumVersion: %s"
                 "\n MaximumVersion: %s"
                 "\n Qgis version: %s"
-                "\n Discarding") % (plugin,minver,maxver,
-                    Qgis.QGIS_VERSION.split('-')[0]))
+                "\n Discarding") % (
+                plugin, minver, maxver, Qgis.QGIS_VERSION.split('-')[0]))
             continue
 
         yield os.path.basename(plugin)
@@ -235,9 +237,9 @@ def load_plugins(serverIface: 'QgsServerInterface') -> None:
 
             # Initialize the plugin
             server_plugins[plugin] = package.serverClassFactory(serverIface)
-            LOGGER.info("Loaded plugin %s",plugin)
-        except:
-            LOGGER.critical("Error loading plugin %s\n%s",plugin, traceback.format_exc())
+            LOGGER.info("Loaded plugin %s", plugin)
+        except Exception:
+            LOGGER.critical("Error loading plugin %s\n%s", plugin, traceback.format_exc())
 
     return server_plugins
 
@@ -245,10 +247,11 @@ def load_plugins(serverIface: 'QgsServerInterface') -> None:
 # Logger hook
 #
 
-def install_logger_hook( verbose: bool=False ) -> None:
+
+def install_logger_hook( verbose: bool = False ) -> None:
     """ Install message log hook
     """
-    from qgis.core import Qgis, QgsApplication, QgsMessageLog
+    from qgis.core import Qgis, QgsApplication
 
     # Add a hook to qgis  message log
     def writelogmessage(message, tag, level):

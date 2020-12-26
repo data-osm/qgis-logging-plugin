@@ -1,16 +1,7 @@
-############################################################################
-#    QGIS Server Plugin Filters: Add Output Formats to GetFeature request
-#
-#    Copyright            : (C) 2016-2019 by 3Liz
-#    Email                : info at 3liz dot com
-#                                                                         
-#   This program is free software; you can redistribute it and/or modify  
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation; either version 2 of the License, or
-#   (at your option) any later version.
-############################################################################
+__copyright__ = 'Copyright 2021, 3Liz'
+__license__ = 'GPL version 3'
+__email__ = 'info@3liz.org'
 
-import traceback
 
 from pathlib import Path
 from time import time
@@ -21,12 +12,13 @@ from qgis.server import QgsServerFilter
 FLUSH_INTERVAL = 3600 * 24
 
 
-def dlog( message, severity=Qgis.Info ):
+def dlog(message, severity=Qgis.Info):
     QgsMessageLog.logMessage(message, 'qgis-logger', severity)
 
+
 # Check every 3.0s
-CHECK_INTERVAL=3.0
-      
+CHECK_INTERVAL = 3.0
+
 
 class FlushFilter(QgsServerFilter):
     """ Qgis filter implementation
@@ -42,15 +34,15 @@ class FlushFilter(QgsServerFilter):
     def clean_up(self, now):
         """
         """
-        if now - self._flush > FLUSH_INTERVAL/2:
+        if now - self._flush > FLUSH_INTERVAL / 2:
             # List candidates to deletion before deleting them
-            paths = [p for p,(tm,_) in self._cached.items() if now - tm > FLUSH_INTERVAL]
+            paths = [p for p, (tm, _) in self._cached.items() if now - tm > FLUSH_INTERVAL]
             for p in paths:
                 del self._cached[p]
         self._flush = now
 
     def requestReady(self):
-        """ Called when request is ready 
+        """ Called when request is ready
         """
         projectpath = self.serverInterface().configFilePath()
         if not projectpath:
@@ -60,7 +52,7 @@ class FlushFilter(QgsServerFilter):
             params = req.parameterMap()
             if params:
                 projectpath = params.get('MAP')
-            
+
         if not projectpath:
             # No path, no cache...
             return
@@ -69,7 +61,7 @@ class FlushFilter(QgsServerFilter):
         path = Path(projectpath)
         if projectpath in self._cached:
             tm, timestamp = self._cached[projectpath]
-            if now-tm > CHECK_INTERVAL:
+            if now - tm > CHECK_INTERVAL:
                 new_timestamp = path.stat().st_mtime
                 if new_timestamp > timestamp:
                     dlog('Updating cache for %s' % projectpath)
