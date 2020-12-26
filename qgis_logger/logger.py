@@ -10,13 +10,15 @@
 #   (at your option) any later version.
 ############################################################################
 
+import json
+import os
+import syslog
+
+from time import time
+from urllib.parse import unquote
+
 from qgis.core import Qgis, QgsMessageLog
 from qgis.server import QgsServerFilter
-from time import time 
-from urllib.parse import unquote
-import os
-import json
-import syslog
 
 from .flushfilter import FlushFilter
 

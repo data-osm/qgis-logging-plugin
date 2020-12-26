@@ -1,12 +1,13 @@
-import sys
-import os
-import pytest
-import glob
 import configparser
-import logging
+import glob
 import json
+import logging
+import os
+import sys
 import traceback
+
 import lxml.etree
+import pytest
 
 logging.basicConfig( stream=sys.stderr )
 logging.disable(logging.NOTSET)
@@ -14,15 +15,16 @@ logging.disable(logging.NOTSET)
 LOGGER = logging.getLogger('qgislogger')
 LOGGER.setLevel(logging.DEBUG)
 
-from typing import (Union, Any, Mapping, Dict, Generator, 
-                    List)
+from typing import Any, Dict, Generator, List, Mapping, Union
 
 #
 from qgis.core import Qgis, QgsApplication, QgsProject
-from qgis.server import (QgsServer, 
-                         QgsServerRequest, 
-                         QgsBufferServerRequest, 
-                         QgsBufferServerResponse)
+from qgis.server import (
+    QgsBufferServerRequest,
+    QgsBufferServerResponse,
+    QgsServer,
+    QgsServerRequest,
+)
 
 plugin_path = None
 
@@ -247,6 +249,7 @@ def install_logger_hook( verbose: bool=False ) -> None:
     """ Install message log hook
     """
     from qgis.core import Qgis, QgsApplication, QgsMessageLog
+
     # Add a hook to qgis  message log
     def writelogmessage(message, tag, level):
         arg = '{}: {}'.format( tag, message )

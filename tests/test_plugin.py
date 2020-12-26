@@ -1,13 +1,13 @@
-import sys
-import os
-import lxml.etree
 import logging
+import os
+import sys
 
 from pathlib import Path
 
+import lxml.etree
+
 from qgis.core import Qgis, QgsProject
-from qgis.server import (QgsBufferServerRequest,
-                         QgsBufferServerResponse)
+from qgis.server import QgsBufferServerRequest, QgsBufferServerResponse
 
 
 def test_load_plugins(client):

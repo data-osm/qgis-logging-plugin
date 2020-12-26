@@ -10,13 +10,13 @@
 #   (at your option) any later version.
 ############################################################################
 
-from qgis.core import Qgis, QgsMessageLog
-from qgis.server import QgsServerFilter
-
 import traceback
 
 from pathlib import Path
 from time import time
+
+from qgis.core import Qgis, QgsMessageLog
+from qgis.server import QgsServerFilter
 
 FLUSH_INTERVAL = 3600 * 24
 
@@ -68,7 +68,7 @@ class FlushFilter(QgsServerFilter):
         now  = time()
         path = Path(projectpath)
         if projectpath in self._cached:
-            tm, timestamp = self._cached[projectpath] 
+            tm, timestamp = self._cached[projectpath]
             if now-tm > CHECK_INTERVAL:
                 new_timestamp = path.stat().st_mtime
                 if new_timestamp > timestamp:
@@ -83,4 +83,3 @@ class FlushFilter(QgsServerFilter):
     def responseComplete(self):
         """ Called when response is ready
         """
-
