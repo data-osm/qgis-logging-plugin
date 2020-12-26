@@ -12,7 +12,7 @@ main:
 	echo "Makefile for packaging infra components: select a task"
 
 PACKAGE=qgis3_logger
-FILES = ../*.py ../metadata.txt ../README.md
+FILES = ../qgis_logger/*.py ../qgis_logger/metadata.txt ../README.md
 PACKAGEDIR=qgis_logger
 
 buildv2/$(PACKAGEDIR):
