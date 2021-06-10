@@ -4,8 +4,13 @@
 # local .fabricrc
 .fabricrc
 
-# python compiled 
+# python
+.venv/
+venv/
 *.pyc
+
+# QGIS-Plugin-CI
+qgis_logger.*.zip
 
 # Mac stuff
 .DS_Store
@@ -18,4 +23,3 @@ factory.manifest
 .pytest_cache
 __output__
 __pycache__
-
