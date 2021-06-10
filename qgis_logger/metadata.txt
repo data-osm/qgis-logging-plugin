@@ -8,3 +8,8 @@ author=3Liz
 email=info@3liz.com
 server=True
 tags=server, syslog
+changelog=changelog
+
+homepage=https://github.com/3liz/qgis-logging-plugin
+tracker=https://github.com/3liz/qgis-logging-plugin/issues
+repository=https://github.com/3liz/qgis-logging-plugin
