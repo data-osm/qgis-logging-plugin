@@ -20,12 +20,12 @@ check_tag:
     - export TAG_NAME=${CI_COMMIT_REF_NAME:1}
     - .lizcloud/check_tag.sh ${TAG_NAME}
 
-flake8:
-  stage: tests
-  script:
-    - flake8
-  tags:
-    - factory
+#flake8:
+#  stage: tests
+#  script:
+#    - flake8
+#  tags:
+#    - factory
 
 build:
   stage: build
@@ -101,4 +101,3 @@ release_prod_legacy:
   tags:
     - fabric
     - infrav2
-
