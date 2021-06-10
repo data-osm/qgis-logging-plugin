@@ -28,10 +28,9 @@ test:
 	docker run --rm --name $(TITLE)-test-$(COMMITID) -w /src \
 		-u $(BECOME_USER) \
 		-v $(SRC):/src   \
-		-v $(SRC):/plugins/$(TITLE) \
+		-v $(SRC)/qgis_logger:/plugins/$(TITLE) \
 		-v $(SRC)/tests/.local:/.local \
 		-v $(LOCAL_HOME)/.cache:/.cache \
 		-e PIP_CACHE_DIR=/.cache \
 		-e PYTEST_ADDOPTS="$(PYTEST_ADDOPTS)" \
 		$(QGIS_IMAGE) /src/tests/run-tests.sh --qgis-plugins=/plugins
-
