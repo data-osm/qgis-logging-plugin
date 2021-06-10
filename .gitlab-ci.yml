@@ -30,7 +30,6 @@ check_tag:
 build:
   stage: build
   script:
-    - make -C tests LOCAL_HOME=$RUNNER_HOME
     - make -C .lizcloud -f factory.mk package
   environment:
     name: snap
