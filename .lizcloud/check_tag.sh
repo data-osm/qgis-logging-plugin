@@ -1,7 +1,7 @@
 #!/bin/bash
 
 VERSION=$1
-METADATA=$(cat wfsOutputExtension/metadata.txt | grep "version=" |  cut -d '=' -f2)
+METADATA=$(cat qgis_logger/metadata.txt | grep "version=" |  cut -d '=' -f2)
 
 if [ "$METADATA" != "$VERSION" ];
 then
