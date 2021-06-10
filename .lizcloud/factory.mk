@@ -2,7 +2,7 @@
 # Makefile for building/packaging qgis for lizmap hosting
 #
 
-VERSION=$(shell ./metadata_key ../metadata.txt version)
+VERSION=$(shell ./metadata_key ../qgis_logger/metadata.txt version)
 
 main:
 »   echo "Makefile for packaging infra components: select a task"
@@ -21,4 +21,3 @@ package: build/$(PACKAGEDIR)
 	@echo "Building package $(PACKAGE)"
 	@cp -rLp $(FILES) build/$(PACKAGEDIR)/
 	$(FACTORY_SCRIPTS)/make-package $(PACKAGE) $(VERSION) $(PACKAGEDIR) ./build
-
