@@ -47,6 +47,12 @@ class SyslogFilter(QgsServerFilter):
         # Send all params throught syslog
         ms = int((time() - self.t_start) * 1000.0)
         status = req.statusCode()
+        # Handle case where status code is not properly set
+        if status == 0:
+            if req.exceptionRaised():
+                status = 500
+            else:
+                status = 200
         pri = syslog.LOG_NOTICE
         params.update(
             self._tags,
