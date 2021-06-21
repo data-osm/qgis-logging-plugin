@@ -46,12 +46,8 @@ class SyslogFilter(QgsServerFilter):
         params = {k: unquote(v) for (k, v) in params.items()}
         # Send all params throught syslog
         ms = int((time() - self.t_start) * 1000.0)
-        if req.exceptionRaised():
-            pri = syslog.LOG_ERR
-            status = "error"
-        else:
-            pri = syslog.LOG_NOTICE
-            status = "ok"
+        status = req.statusCode()
+        pri = syslog.LOG_NOTICE
         params.update(
             self._tags,
             RESPONSE_TIME=ms,
