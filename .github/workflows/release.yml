@@ -9,7 +9,7 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
-    if: github.repository == '3liz/qgis-logging-plugin'
+    if: github.repository_owner == '3liz'
 
     steps:
 
@@ -33,29 +33,28 @@ jobs:
       - name: Install Python requirements
         run: pip install -r .github/requirements.txt
 
+      - name : Get current changelog
+        run: qgis-plugin-ci changelog ${{ env.RELEASE_VERSION }} >> release.md
 
-    - name : Get current changelog
-      run: qgis-plugin-ci changelog ${{ env.RELEASE_VERSION }} >> release.md
+      - name: Create release on GitHub
+        uses: ncipollo/release-action@v1.8.6
+        with:
+          bodyFile: release.md
+          token: ${{ secrets.BOT_HUB_TOKEN }}
 
-    - name: Create release on GitHub
-      uses: ncipollo/release-action@v1.8.6
-      with:
-        bodyFile: release.md
-        token: ${{ secrets.BOT_HUB_TOKEN }}
+#      - name: Package the plugin and deploy it in the release
+#        run: >-
+#          qgis-plugin-ci
+#          release ${{ env.RELEASE_VERSION }}
+#          --github-token ${{ secrets.BOT_HUB_TOKEN }}
+#          --osgeo-username ${{ secrets.OSGEO_USERNAME }}
+#          --osgeo-password ${{ secrets.OSGEO_PASSWORD }}
+#          --create-plugin-repo
 
-#    - name: Package the plugin and deploy it in the release
-#      run: >-
-#        qgis-plugin-ci
-#        release ${{ env.RELEASE_VERSION }}
-#        --github-token ${{ secrets.BOT_HUB_TOKEN }}
-#        --osgeo-username ${{ secrets.OSGEO_USERNAME }}
-#        --osgeo-password ${{ secrets.OSGEO_PASSWORD }}
-#        --create-plugin-repo
-
-    - name: Repository Dispatch
-      uses: peter-evans/repository-dispatch@v1
-      with:
-        token: ${{ secrets.BOT_HUB_TOKEN }}
-        repository: 3liz/3liz.github.io
-        event-type: merge-plugins
-        client-payload: '{"name": "qgis_logger", "version": "${{ env.RELEASE_VERSION }}", "url": "https://github.com/3liz/qgis-logging-plugin/releases/latest/download/plugins.xml"}'
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.BOT_HUB_TOKEN }}
+          repository: 3liz/3liz.github.io
+          event-type: merge-plugins
+          client-payload: '{"name": "qgis_logger", "version": "${{ env.RELEASE_VERSION }}", "url": "https://github.com/3liz/qgis-logging-plugin/releases/latest/download/plugins.xml"}'
