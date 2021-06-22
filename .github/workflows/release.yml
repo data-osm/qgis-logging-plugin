@@ -33,7 +33,7 @@ jobs:
       - name: Install Python requirements
         run: pip install -r .github/requirements.txt
 
-      - name : Get current changelog
+      - name: Get current changelog
         run: qgis-plugin-ci changelog ${{ env.RELEASE_VERSION }} >> release.md
 
       - name: Create release on GitHub
