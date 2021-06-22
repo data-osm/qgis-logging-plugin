@@ -43,14 +43,14 @@ jobs:
         bodyFile: release.md
         token: ${{ secrets.BOT_HUB_TOKEN }}
 
-    - name: Package the plugin and deploy it in the release
-      run: >-
-        qgis-plugin-ci
-        release ${{ env.RELEASE_VERSION }}
-        --github-token ${{ secrets.BOT_HUB_TOKEN }}
-        --osgeo-username ${{ secrets.OSGEO_USERNAME }}
-        --osgeo-password ${{ secrets.OSGEO_PASSWORD }}
-        --create-plugin-repo
+#    - name: Package the plugin and deploy it in the release
+#      run: >-
+#        qgis-plugin-ci
+#        release ${{ env.RELEASE_VERSION }}
+#        --github-token ${{ secrets.BOT_HUB_TOKEN }}
+#        --osgeo-username ${{ secrets.OSGEO_USERNAME }}
+#        --osgeo-password ${{ secrets.OSGEO_PASSWORD }}
+#        --create-plugin-repo
 
     - name: Repository Dispatch
       uses: peter-evans/repository-dispatch@v1
