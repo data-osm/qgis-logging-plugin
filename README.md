@@ -1,3 +1,5 @@
+## DEPRECATION NOTE: This plugin is no longer maintained
+
 # QGIS server plugins for infrastructure
 
 Set of QGIS server plugins for monitoring and managing QGIS server behavior.
