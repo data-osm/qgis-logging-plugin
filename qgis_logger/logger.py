@@ -5,7 +5,7 @@ __email__ = 'info@3liz.org'
 import json
 import os
 import syslog
-
+from os.path import join
 from time import time
 from urllib.parse import unquote
 
@@ -16,6 +16,8 @@ from .flushfilter import FlushFilter
 
 TAG_PREFIX = 'QGIS_LOGGING_TAG_'
 
+from pathlib import Path
+current_file_path = Path(__file__).resolve().parent.parent
 
 class SyslogFilter(QgsServerFilter):
     """ Qgis syslog filter implementation
@@ -60,17 +62,23 @@ class SyslogFilter(QgsServerFilter):
             RESPONSE_STATUS=status)
         log_msg = json.dumps(params)
         syslog.syslog(pri, log_msg)
+        try:
+            with open(join(current_file_path,'qgs_server.log'), "a") as myfile:
+                myfile.write(log_msg+"\n")
+        except Exception as e :
+            QgsMessageLog.logMessage("An error happened in Syslog/Flush plugin",str(e),Qgis.Critical)
+            pass
 
 
 class SyslogClient:
 
     def __init__(self, iface):
-        """ Note that we use a very low priority
+        """ Note that we use a very low priority 
             because we want all processing done
             before going returning syslog infos
         """
         # save reference to the QGIS interface
         self.iface = iface
-        QgsMessageLog.logMessage("Initializing Syslog/Flush plugin", 'plugin', Qgis.Info)
+        QgsMessageLog.logMessage("Initializing Syslog/Flush  plugin", 'info', Qgis.Info)
         self.iface.registerFilter( SyslogFilter(iface), 1000 )
         self.iface.registerFilter( FlushFilter(iface),  10 )
