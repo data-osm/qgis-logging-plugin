@@ -1,4 +1,4 @@
-## DEPRECATION NOTE: This plugin is no longer maintained
+A fork of qgis-logging-plugin. This only add the ability to log both in a file and syslog
 
 # QGIS server plugins for infrastructure
 
